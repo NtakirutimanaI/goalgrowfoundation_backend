@@ -5,10 +5,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.enableCors({
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://goalgrowfoundation-frontend.vercel.app', 'http://localhost:3000']
-      : true,
+    app.enableCors({
+    origin: ['https://goalgrowfoundation-frontend.vercel.app', 'http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
