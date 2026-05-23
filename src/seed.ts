@@ -105,13 +105,20 @@ async function seed() {
     for (const userData of seedUsers) {
       const existing = await userRepo.findOne({ where: { email: userData.email } });
 
-      if (existing) {
-        console.log(`⏭️  Skipping "${userData.email}" (already exists) — Role: ${userData.role}`);
-        continue;
-      }
-
       const salt = await bcrypt.genSalt(10);
       const passwordHash = await bcrypt.hash(userData.password, salt);
+
+      if (existing) {
+        // Update the password hash and role to ensure login works
+        existing.passwordHash = passwordHash;
+        existing.fullName = userData.fullName;
+        existing.phone = userData.phone;
+        existing.address = userData.address;
+        existing.role = userData.role;
+        await userRepo.save(existing);
+        console.log(`🔄 Updated "${userData.email}" (password hash refreshed) — Role: ${userData.role}`);
+        continue;
+      }
 
       const user = userRepo.create({
         email: userData.email,
